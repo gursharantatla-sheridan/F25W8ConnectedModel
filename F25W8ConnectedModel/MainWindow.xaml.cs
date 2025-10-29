@@ -87,5 +87,28 @@ namespace F25W8ConnectedModel
                 MessageBox.Show("Total rows = " + rowsCount);
             }
         }
+
+        private void btnInsert_Click(object sender, RoutedEventArgs e)
+        {
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                string query = "insert into Employees (FirstName, LastName) values (@fn, @ln)";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("fn", txtFirstname.Text);
+                cmd.Parameters.AddWithValue("ln", txtLastname.Text);
+
+                conn.Open();
+
+                int result = cmd.ExecuteNonQuery();
+
+                if (result == 1)
+                {
+                    LoadGrid();
+                    MessageBox.Show("New employee added");
+                }
+                else
+                    MessageBox.Show("New employee not added");
+            }
+        }
     }
 }
