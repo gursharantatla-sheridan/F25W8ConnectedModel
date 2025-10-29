@@ -29,25 +29,42 @@ namespace F25W8ConnectedModel
 
         private void LoadGrid()
         {
-            SqlConnection conn = new SqlConnection(connStr);
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                string query = "select EmployeeID, FirstName, LastName, City, Country from Employees";
+                SqlCommand cmd = new SqlCommand(query, conn);
 
-            string query = "select EmployeeID, FirstName, LastName, City, Country from Employees";
-            SqlCommand cmd = new SqlCommand(query, conn);
+                conn.Open();
 
-            conn.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
 
-            SqlDataReader reader = cmd.ExecuteReader();
-
-            DataTable tbl = new DataTable();
-            tbl.Load(reader);
-            grdEmployees.ItemsSource = tbl.DefaultView;
-
-            conn.Close();
+                DataTable tbl = new DataTable();
+                tbl.Load(reader);
+                grdEmployees.ItemsSource = tbl.DefaultView;
+            }
+            //conn.Close();
         }
 
         private void btnLoad_Click(object sender, RoutedEventArgs e)
         {
             LoadGrid();
+        }
+
+        private void btnSearch_Click(object sender, RoutedEventArgs e)
+        {
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                string query = "select EmployeeID, FirstName, LastName, City, Country from Employees where FirstName = '" + txtFirstname.Text + "'";
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                conn.Open();
+
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                DataTable tbl = new DataTable();
+                tbl.Load(reader);
+                grdEmployees.ItemsSource = tbl.DefaultView;
+            }
         }
     }
 }
