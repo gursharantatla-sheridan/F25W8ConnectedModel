@@ -58,10 +58,10 @@ namespace F25W8ConnectedModel
                 //string query = "select EmployeeID, FirstName, LastName, City, Country from Employees where FirstName = '" + txtFirstname.Text + "'";
 
                 // parameterized query
-                string query = "select EmployeeID, FirstName, LastName, City, Country from Employees where FirstName = @firstName";
+                string query = "select EmployeeID, FirstName, LastName, City, Country from Employees where FirstName like @firstName";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("firstName", txtFirstname.Text);
+                cmd.Parameters.AddWithValue("firstName", "%" + txtFirstname.Text + "%");
 
                 conn.Open();
 
@@ -70,6 +70,21 @@ namespace F25W8ConnectedModel
                 DataTable tbl = new DataTable();
                 tbl.Load(reader);
                 grdEmployees.ItemsSource = tbl.DefaultView;
+            }
+        }
+
+        private void btnCount_Click(object sender, RoutedEventArgs e)
+        {
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                string query = "select count(*) from Employees";
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                conn.Open();
+
+                int rowsCount = (int)cmd.ExecuteScalar();
+
+                MessageBox.Show("Total rows = " + rowsCount);
             }
         }
     }
